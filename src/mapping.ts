@@ -7,7 +7,8 @@ import {
   Unpaused,
   CreateAuctionCall
 } from "../generated/cyblocbidandaution/cyblocbidandaution"
-import { BidEntity, ExampleEntity, AuctionSuccessfulEntity, AuctionCreatedEntity, CreateAuctionEntity } from "../generated/schema"
+import { BidEntity, ExampleEntity, AuctionSuccessfulEntity, AuctionCreatedEntity, CreateAuctionEntity, ApprovalEntity } from "../generated/schema"
+import { Approval } from "../generated/sharnft/sharnft";
 
 export function handleAuctionCancelled(event: AuctionCancelled): void {
   // Entities can be loaded from the store using a string ID; this ID
@@ -125,5 +126,21 @@ export function handlecreateAuction(call: CreateAuctionCall): void {
   transaction._payToken = call.inputs._payToken
   transaction.save()  
 }
+
+export function handleApproval(event: Approval): void {
+  let entity = ApprovalEntity.load(event.transaction.from.toHex())
+
+  if (entity == null) {
+    entity = new ApprovalEntity(event.transaction.from.toHex())
+
+  }
+  entity.owner = event.params.owner
+  entity.approved = event.params.approved
+  entity.tokenId = event.params.tokenId 
+
+  entity.save()
+
+ }
+
 
 

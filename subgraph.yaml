@@ -8,7 +8,7 @@ dataSources:
     source:
       address: "0x820a52c83ffd1E108A56152f3161023F4EF41479"
       abi: cyblocbidandaution
-      startBlock: 12885703
+      startBlock: 15959677
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -38,9 +38,29 @@ dataSources:
         - event: Paused(address)
           handler: handlePaused
         - event: Unpaused(address)
-          handler: handleUnpaused            
+          handler: handleUnpaused                        
+      file: ./src/mapping.ts
+
+  - kind: ethereum/contract
+    name: sharnft
+    network: bsc
+    source:
+      address: "0x416f1D70c1C22608814d9f36c492EfB3Ba8cad4c"
+      abi: sharnft
+      startBlock: 16108925
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - ApprovalEntity      
+      abis:
+        - name: sharnft
+          file: ./abis/sharnft.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,indexed uint256)
+          handler: handleApproval
       callHandlers:
-        - function: createAuction(address,uint256,uint256,uint256,uint256,address)
-          handler: handlecreateAuction
-        
+        - function: createGravatar(string,string)
+          handler: handleCreateGravatar                   
       file: ./src/mapping.ts

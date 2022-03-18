@@ -43,3 +43,10 @@ type BidEntity @entity {
   _bidAmount: BigInt! # uint256
   _payToken: Bytes! # address
 }
+
+type ApprovalEntity @entity {
+  id: ID!
+  owner: Bytes! # address
+  approved: Bytes! # address
+  tokenId: BigInt! # uint256
+}
