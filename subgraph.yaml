@@ -5,9 +5,6 @@ dataSources:
   - kind: ethereum/contract
     name: cyblocbidandaution
     network: bsc
-templates:
-  - name: cyblocbidandaution
-    kind: ethereum/contract
     source:
       address: "0x820a52c83ffd1E108A56152f3161023F4EF41479"
       abi: cyblocbidandaution
