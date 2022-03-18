@@ -1,14 +1,13 @@
 import { BigInt } from "@graphprotocol/graph-ts"
 import {
-  cyblocbidandaution,
   AuctionCancelled,
   AuctionCreated,
-  AuctionSuccessful,
-  OwnershipTransferred,
+  AuctionSuccessful, BidCall, OwnershipTransferred,
   Paused,
-  Unpaused
+  Unpaused,
+  CreateAuctionCall
 } from "../generated/cyblocbidandaution/cyblocbidandaution"
-import { ExampleEntity } from "../generated/schema"
+import { BidEntity, ExampleEntity, AuctionSuccessfulEntity, AuctionCreatedEntity, CreateAuctionEntity } from "../generated/schema"
 
 export function handleAuctionCancelled(event: AuctionCancelled): void {
   // Entities can be loaded from the store using a string ID; this ID
@@ -59,12 +58,72 @@ export function handleAuctionCancelled(event: AuctionCancelled): void {
   // - contract.paused(...)
 }
 
-export function handleAuctionCreated(event: AuctionCreated): void {}
+export function handleAuctionSuccessful(event: AuctionSuccessful): void { 
+  let entity = AuctionSuccessfulEntity.load(event.transaction.from.toHex())
 
-export function handleAuctionSuccessful(event: AuctionSuccessful): void {}
+  // Entities only exist after they have been saved to the store;
+  // `null` checks allow to create entities on demand
+  if (entity == null) {
+    entity = new AuctionSuccessfulEntity(event.transaction.from.toHex())
+  }
 
-export function handleOwnershipTransferred(event: OwnershipTransferred): void {}
+  // Entity fields can be set based on event parameters
+  entity._nftAddress = event.params._nftAddress;
+  entity._tokenId = event.params._tokenId;
+  entity._totalPrice = event.params._totalPrice;
+  entity._winner = event.params._winner;
+  entity._seller = event.params._seller;
+  entity._payToken = event.params._payToken;
 
-export function handlePaused(event: Paused): void {}
+  // Entities can be written to the store with `.save()`
+  entity.save();
 
-export function handleUnpaused(event: Unpaused): void {}
+}
+
+export function handleOwnershipTransferred(event: OwnershipTransferred): void { }
+
+export function handlePaused(event: Paused): void { }
+
+export function handleUnpaused(event: Unpaused): void { }
+
+export function handlebid(call: BidCall): void {
+  let id = call.transaction.hash.toHex()
+  let transaction = new BidEntity(id)
+  transaction._nftAddress = call.inputs._nftAddress
+  transaction._tokenId = call.inputs._tokenId
+  transaction._bidAmount = call.inputs._bidAmount
+  transaction._payToken = call.inputs._payToken
+  transaction.save()
+}
+
+export function handleAuctionCreated(event: AuctionCreated): void {
+  let entity = AuctionCreatedEntity.load(event.transaction.from.toHex())
+
+  if (entity == null) {
+    entity = new AuctionCreatedEntity(event.transaction.from.toHex())
+
+  }
+  entity._nftAddress = event.params._nftAddress
+  entity._tokenId = event.params._tokenId
+  entity._startingPrice = event.params._startingPrice
+  entity._endingPrice = event.params._endingPrice
+  entity._duration = event.params._duration
+  entity._seller = event.params._seller
+  entity._payToken = event.params._payToken
+
+  entity.save()
+}
+
+export function handlecreateAuction(call: CreateAuctionCall): void {
+  let id = call.transaction.hash.toHex()
+  let transaction = new CreateAuctionEntity(id)
+  transaction._nftAddress = call.inputs._nftAddress
+  transaction._tokenId = call.inputs._tokenId
+  transaction._startingPrice = call.inputs._startingPrice
+  transaction._endingPrice = call.inputs._endingPrice
+  transaction._duration = call.inputs._duration
+  transaction._payToken = call.inputs._payToken
+  transaction.save()  
+}
+
+

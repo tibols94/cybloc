@@ -1,13 +1,10 @@
 specVersion: 0.0.2
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum/contract
     name: cyblocbidandaution
     network: bsc
-templates:
-  - name: cyblocbidandaution
-    kind: ethereum/contract
     source:
       address: "0x820a52c83ffd1E108A56152f3161023F4EF41479"
       abi: cyblocbidandaution
@@ -28,11 +25,12 @@ templates:
         - BidEntity
       abis:
         - name: cyblocbidandaution
-          file: ./abis/cyblocbidandaution.json
+          file: cyblocbidandaution\abis\cyblocbidandaution.json
       eventHandlers:
         - event: AuctionCancelled(indexed address,indexed uint256)
           handler: handleAuctionCancelled
-        - event: AuctionCreated(indexed address,indexed uint256,uint256,uint256,uint256,address,address)
+        - event: AuctionCreated(indexed address,indexed
+            uint256,uint256,uint256,uint256,address,address)
           handler: handleAuctionCreated
         - event: AuctionSuccessful(indexed address,indexed uint256,uint256,address,address,address)
           handler: handleAuctionSuccessful
@@ -41,9 +39,8 @@ templates:
         - event: Paused(address)
           handler: handlePaused
         - event: Unpaused(address)
-          handler: handleUnpaused            
+          handler: handleUnpaused
       callHandlers:
         - function: createAuction(address,uint256,uint256,uint256,uint256,address)
           handler: handlecreateAuction
-        
-      file: ./src/mapping.ts
+      file: cyblocbidandaution\cyblocbidandaution.wasm
