@@ -1,91 +1,29 @@
-import { BigInt } from "@graphprotocol/graph-ts"
 import {
-  AuctionCancelled,
   AuctionCreated,
-  AuctionSuccessful, BidCall, OwnershipTransferred,
-  Paused,
-  Unpaused,
+  AuctionSuccessful,
+  BidCall,
   CreateAuctionCall
 } from "../generated/cyblocbidandaution/cyblocbidandaution"
-import { BidEntity, ExampleEntity, AuctionSuccessfulEntity, AuctionCreatedEntity, CreateAuctionEntity, ApprovalEntity } from "../generated/schema"
+import { BidEntity, AuctionSuccessfulEntity, AuctionCreatedEntity, CreateAuctionEntity, ApprovalEntity } from "../generated/schema"
 import { Approval } from "../generated/sharnft/sharnft";
+import { store, crypto } from '@graphprotocol/graph-ts'
 
-export function handleAuctionCancelled(event: AuctionCancelled): void {
-  // Entities can be loaded from the store using a string ID; this ID
-  // needs to be unique across all entities of the same type
-  let entity = ExampleEntity.load(event.transaction.from.toHex())
-
-  // Entities only exist after they have been saved to the store;
-  // `null` checks allow to create entities on demand
+export function handleAuctionSuccessful(event: AuctionSuccessful): void {
+  let entity = AuctionSuccessfulEntity.load(event.transaction.hash.toHex())
+  
   if (entity == null) {
-    entity = new ExampleEntity(event.transaction.from.toHex())
-
-    // Entity fields can be set using simple assignments
-    entity.count = BigInt.fromI32(0)
+    entity = new AuctionSuccessfulEntity(event.transaction.hash.toHex())
   }
 
-  // BigInt and BigDecimal math are supported
-  entity.count = entity.count + BigInt.fromI32(1)
-
-  // Entity fields can be set based on event parameters
-  entity._nftAddress = event.params._nftAddress
-  entity._tokenId = event.params._tokenId
-
-  // Entities can be written to the store with `.save()`
-  entity.save()
-
-  // Note: If a handler doesn't require existing field values, it is faster
-  // _not_ to load the entity from the store. Instead, create it fresh with
-  // `new Entity(...)`, set the fields that should be updated and save the
-  // entity back to the store. Fields that were not set or unset remain
-  // unchanged, allowing for partial updates to be applied.
-
-  // It is also possible to access smart contracts from mappings. For
-  // example, the contract that has emitted the event can be connected to
-  // with:
-  //
-  // let contract = Contract.bind(event.address)
-  //
-  // The following functions can then be called on this contract to access
-  // state variables and other data:
-  //
-  // - contract.acceptPayTokens(...)
-  // - contract.auctions(...)
-  // - contract.feeTo(...)
-  // - contract.getAuction(...)
-  // - contract.getCurrentPrice(...)
-  // - contract.marketFee(...)
-  // - contract.owner(...)
-  // - contract.paused(...)
-}
-
-export function handleAuctionSuccessful(event: AuctionSuccessful): void { 
-  let entity = AuctionSuccessfulEntity.load(event.transaction.from.toHex())
-
-  // Entities only exist after they have been saved to the store;
-  // `null` checks allow to create entities on demand
-  if (entity == null) {
-    entity = new AuctionSuccessfulEntity(event.transaction.from.toHex())
-  }
-
-  // Entity fields can be set based on event parameters
   entity._nftAddress = event.params._nftAddress;
   entity._tokenId = event.params._tokenId;
   entity._totalPrice = event.params._totalPrice;
   entity._winner = event.params._winner;
   entity._seller = event.params._seller;
   entity._payToken = event.params._payToken;
-
-  // Entities can be written to the store with `.save()`
+  let blockNumber = 
   entity.save();
-
 }
-
-export function handleOwnershipTransferred(event: OwnershipTransferred): void { }
-
-export function handlePaused(event: Paused): void { }
-
-export function handleUnpaused(event: Unpaused): void { }
 
 export function handlebid(call: BidCall): void {
   let id = call.transaction.hash.toHex()
@@ -98,10 +36,10 @@ export function handlebid(call: BidCall): void {
 }
 
 export function handleAuctionCreated(event: AuctionCreated): void {
-  let entity = AuctionCreatedEntity.load(event.transaction.from.toHex())
+  let entity = AuctionCreatedEntity.load(event.transaction.hash.toHex())
 
   if (entity == null) {
-    entity = new AuctionCreatedEntity(event.transaction.from.toHex())
+    entity = new AuctionCreatedEntity(event.transaction.hash.toHex())
 
   }
   entity._nftAddress = event.params._nftAddress
@@ -124,7 +62,7 @@ export function handlecreateAuction(call: CreateAuctionCall): void {
   transaction._endingPrice = call.inputs._endingPrice
   transaction._duration = call.inputs._duration
   transaction._payToken = call.inputs._payToken
-  transaction.save()  
+  transaction.save()
 }
 
 export function handleApproval(event: Approval): void {
@@ -136,11 +74,11 @@ export function handleApproval(event: Approval): void {
   }
   entity.owner = event.params.owner
   entity.approved = event.params.approved
-  entity.tokenId = event.params.tokenId 
+  entity.tokenId = event.params.tokenId
 
   entity.save()
 
- }
+}
 
 
 

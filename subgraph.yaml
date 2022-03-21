@@ -4,7 +4,7 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: cyblocbidandaution
-    network: bsc
+    network: mainnet
     source:
       address: "0x820a52c83ffd1E108A56152f3161023F4EF41479"
       abi: cyblocbidandaution
@@ -27,40 +27,34 @@ dataSources:
         - name: cyblocbidandaution
           file: ./abis/cyblocbidandaution.json
       eventHandlers:
-        - event: AuctionCancelled(indexed address,indexed uint256)
-          handler: handleAuctionCancelled
         - event: AuctionCreated(indexed address,indexed uint256,uint256,uint256,uint256,address,address)
           handler: handleAuctionCreated
         - event: AuctionSuccessful(indexed address,indexed uint256,uint256,address,address,address)
           handler: handleAuctionSuccessful
-        - event: OwnershipTransferred(indexed address,indexed address)
-          handler: handleOwnershipTransferred
-        - event: Paused(address)
-          handler: handlePaused
-        - event: Unpaused(address)
-          handler: handleUnpaused                        
+            
       file: ./src/mapping.ts
 
-  - kind: ethereum/contract
-    name: sharnft
-    network: bsc
-    source:
-      address: "0x416f1D70c1C22608814d9f36c492EfB3Ba8cad4c"
-      abi: sharnft
-      startBlock: 16108925
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      entities:
-        - ApprovalEntity      
-      abis:
-        - name: sharnft
-          file: ./abis/sharnft.json
-      eventHandlers:
-        - event: Approval(indexed address,indexed address,indexed uint256)
-          handler: handleApproval
-      callHandlers:
-        - function: createGravatar(string,string)
-          handler: handleCreateGravatar                   
-      file: ./src/mapping.ts
+
+  # - kind: ethereum/contract
+  #   name: sharnft
+  #   network: bsc
+  #   source:
+  #     address: "0x416f1D70c1C22608814d9f36c492EfB3Ba8cad4c"
+  #     abi: sharnft
+  #     startBlock: 16108925
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.4
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - ApprovalEntity      
+  #     abis:
+  #       - name: sharnft
+  #         file: ./abis/sharnft.json
+  #     eventHandlers:
+  #       - event: Approval(indexed address,indexed address,indexed uint256)
+  #         handler: handleApproval
+  #     callHandlers:
+  #       - function: createGravatar(string,string)
+  #         handler: handleCreateGravatar                   
+  #     file: ./src/mapping.ts
